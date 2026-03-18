@@ -11,8 +11,8 @@ namespace Wex.API.Models
         public decimal? Amount { get; set; }
 
         // Foreign key
-        public long? CardId { get; set; }
-        public virtual Card? Card { get; set; }
+        public long CardId { get; set; }
+        public virtual Card Card { get; set; } = null!;
 
         public override int GetHashCode()
         {

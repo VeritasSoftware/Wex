@@ -10,10 +10,12 @@ namespace Wex.Repositories.Test
         public static MoneyManagementContext SeedCardsDatabase() 
         {
             var options = new DbContextOptionsBuilder<MoneyManagementContext>()
-            .UseSqlite("Data Source=cards.db") // SQLite for simplicity
+            .UseSqlite("Data Source=MyInMemoryDb;Mode=Memory;") // SQLite for simplicity
             .Options;
 
             var context = new MoneyManagementContext(options);
+
+            context.Database.OpenConnection();
 
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
@@ -23,6 +25,8 @@ namespace Wex.Repositories.Test
                 Id = 1,
                 CreditLimit = 1000.50m
             });
+
+            context.SaveChanges();
 
             context.Transactions.Add(new Transaction
             {

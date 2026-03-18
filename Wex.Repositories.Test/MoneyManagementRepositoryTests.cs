@@ -1,9 +1,10 @@
-﻿using Wex.API.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Wex.API.Models;
 using Wex.API.Repositories;
 
 namespace Wex.Repositories.Test
 {    
-    public class MoneyManagementRepositoryTests
+    public class MoneyManagementRepositoryTests : IAsyncDisposable
     {
         private readonly MoneyManagementContext _context;
 
@@ -14,7 +15,7 @@ namespace Wex.Repositories.Test
 
         [Theory]
         [ClassData(typeof(TransactionsTestData))]
-        public async Task GetTransaction_Success(Guid identifier, Transaction expectedResult)
+        public async Task GetTransactionAsync(Guid identifier, Transaction expectedResult)
         {
             // Arrange
             var repository = new MoneyManagementRepository(_context);
@@ -51,6 +52,72 @@ namespace Wex.Repositories.Test
             // Assert
             Assert.NotNull(transactionFromDb);
             Assert.Equal(transaction, transactionFromDb);
+        }
+
+        [Fact]
+        public async Task AddTransactionAsync_ForeignKeyNotProvided_Fail()
+        {
+            // Arrange
+            var repository = new MoneyManagementRepository(_context);
+
+            var identifier = Guid.NewGuid();
+
+            var transaction = new Transaction
+            {
+                Identifier = identifier,
+                Amount = 100,
+                Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                Description = "Test Transaction",
+            };
+
+            // Act
+            try
+            {
+                await repository.AddTransactionAsync(transaction);
+            }
+            catch (Exception ex)
+            {
+                // Assert
+                Assert.Equal("SQLite Error 19: 'FOREIGN KEY constraint failed'.", ex.InnerException?.Message);
+                return;
+            }            
+        }
+
+        [Fact]
+        public async Task AddTransactionAsync_ForeignKeyDoesNotExist_Fail()
+        {
+            // Arrange
+            var repository = new MoneyManagementRepository(_context);
+
+            var identifier = Guid.NewGuid();
+
+            var transaction = new Transaction
+            {
+                Identifier = identifier,
+                Amount = 100,
+                Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                Description = "Test Transaction",
+                CardId = 999 // Non-existent CardId
+            };
+
+            // Act
+            try
+            {
+                await repository.AddTransactionAsync(transaction);
+            }
+            catch (Exception ex)
+            {
+                // Assert
+                Assert.Equal("SQLite Error 19: 'FOREIGN KEY constraint failed'.", ex.InnerException?.Message);
+                return;
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await _context.Database.CloseConnectionAsync();
+
+            await  _context.DisposeAsync();
         }
     }
 }

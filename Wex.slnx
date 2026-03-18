@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/Tests/">
-    <Project Path="Wex.Repositories.Test/Wex.Repositories.Test.csproj" Id="0e61c95a-784d-4558-aaa3-71407cb8616b" />
+    <Project Path="Wex.Tests/Wex.Tests.csproj" Id="1a8f8037-2e36-44ce-b214-137ff2cb27fb" />
   </Folder>
   <Project Path="Wex.API/Wex.API.csproj" />
 </Solution>

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Globalization;
-using Wex.API.Models;
+using Wex.API.Entities;
 using Wex.API.Repositories;
 
-namespace Wex.Repositories.Test
+namespace Wex.Tests
 {
     public static class SeedDatabase
     {

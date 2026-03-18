@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Wex.API.Models;
+using Wex.API.Entities;
 
 namespace Wex.API.Repositories
 {

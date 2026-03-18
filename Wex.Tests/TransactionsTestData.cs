@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
-using Wex.API.Models;
+using Wex.API.Entities;
 
-namespace Wex.Repositories.Test
+namespace Wex.Tests
 {
     public class TransactionsTestData : TheoryData<Guid, Transaction?>
     {
@@ -18,7 +18,7 @@ namespace Wex.Repositories.Test
                     Description = "Another Test Transaction",
                     CardId = 1,
                     Identifier = Guid.Parse("3d142c0f-1fc9-48cf-be15-26eea3497b71"),
-                    Card = null
+                    Card = null!
                 }
             );
             Add

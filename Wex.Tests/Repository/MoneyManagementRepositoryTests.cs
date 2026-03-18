@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Wex.API.Models;
+using Wex.API.Entities;
 using Wex.API.Repositories;
 
-namespace Wex.Repositories.Test
+namespace Wex.Tests.Repository
 {    
     public class MoneyManagementRepositoryTests : IAsyncDisposable
     {

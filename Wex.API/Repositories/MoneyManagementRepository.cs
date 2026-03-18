@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Wex.API.Models;
+using Wex.API.Entities;
 
 namespace Wex.API.Repositories
 {
-    public class MoneyManagementRepository
+    public class MoneyManagementRepository : IMoneyManagementRepository
     {
         MoneyManagementContext _context;
 

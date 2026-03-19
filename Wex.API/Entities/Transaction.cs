@@ -1,4 +1,6 @@
-﻿namespace Wex.API.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Wex.API.Entities
 {
     public class Transaction
     {
@@ -6,6 +8,8 @@
         public string Description { get; set; } = string.Empty;
         public DateTime Date { get; set; }
         public Guid Identifier { get; set; }
+        [NotMapped]
+        public Guid CardIdentifier { get; set; }
         public decimal Amount { get; set; }
 
         // Foreign key

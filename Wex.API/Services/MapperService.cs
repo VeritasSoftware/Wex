@@ -13,6 +13,9 @@ namespace Wex.API.Services
         {
             var config = new MapperConfiguration(cfg =>
             {
+                cfg.CreateMap<CardCreateModel, Card>()
+                    .ForMember(d => d.Identifier, s => s.MapFrom(src => Guid.NewGuid()));
+                cfg.CreateMap<Card, CardModel>();
                 cfg.CreateMap<TransactionCreateModel, Transaction>()
                     .ForMember(d => d.Identifier, s => s.MapFrom(src => Guid.NewGuid()))
                     .ForMember(d => d.Date, s => s.MapFrom(src => ToUniversalDateTime(src.Date)))

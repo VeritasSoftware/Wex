@@ -39,14 +39,15 @@ namespace Wex.API.Services
             }
 
             if (country == null || country == _configuration["DefaultCurrencyCountry"])
-            {                
+            {
                 return new TransactionModel
                 {
                     Amount = transactionDb.Amount,
                     CurrencyCode = "Dollar",
                     Date = transactionDb.Date.ToString(CultureInfo.CurrentCulture),
                     Description = transactionDb.Description,
-                    Identifier = transactionDb.Identifier
+                    Identifier = transactionDb.Identifier,
+                    CardIdentifier = transactionDb.CardIdentifier,
                 };
             }
 
@@ -66,19 +67,37 @@ namespace Wex.API.Services
             {
                 Amount = convertedAmount,
                 CurrencyCode = exchangeRate.CurrencyCode,
-                Date = transactionDb.Date.ToString(CultureInfo.CurrentCulture),
+                Date = FromUniversalDateTime(transactionDb.Date),
                 Description = transactionDb.Description,
-                Identifier = transactionDb.Identifier
+                Identifier = transactionDb.Identifier,
+                CardIdentifier = transactionDb.CardIdentifier,
             };
+        }
+
+        private static string FromUniversalDateTime(DateTime date)
+        {
+            // Convert to local time
+            DateTime localDateTime = date.ToLocalTime();
+
+            return DateOnly.FromDateTime(localDateTime.Date).ToString(CultureInfo.CurrentCulture);
         }
 
         public async Task<TransactionSavedModel> AddTransactionAsync(TransactionCreateModel transaction)
         {
-            var dbTransactionn = _mapper.Map<TransactionCreateModel, Transaction>(transaction);
+            var dbTransaction = _mapper.Map<TransactionCreateModel, Transaction>(transaction);
 
-            var transactionInDb = await _repository.AddTransactionAsync(dbTransactionn);
+            var transactionInDb = await _repository.AddTransactionAsync(dbTransaction);
 
             return _mapper.Map<Transaction, TransactionSavedModel>(transactionInDb);
+        }
+
+        public async Task<CardModel> AddCardAsync(CardCreateModel card)
+        {
+            var dbCard = _mapper.Map<CardCreateModel, Card>(card);
+
+            var cardInDb = await _repository.AddCardAsync(dbCard);
+
+            return _mapper.Map<Card, CardModel>(cardInDb);
         }
     }
 }

@@ -35,15 +35,14 @@ app.MapGet("/moneymanagement/{identifier}/{country?}", async (string identifier,
     return op;
 });
 
+app.MapPost("/moneymanagement/card", async (CardCreateModel card, [FromServices] IMoneyManagementService moneyManagementService) =>
+{
+    return await moneyManagementService.AddCardAsync(card);
+});
+
 app.MapPost("/moneymanagement/transaction", async (TransactionCreateModel transaction, [FromServices] IMoneyManagementService moneyManagementService) =>
 {
     return await moneyManagementService.AddTransactionAsync(transaction);
-
-    //return Results.CreatedAtRoute(
-    //    routeName: "GetTransaction",
-    //    routeValues: new { identifier = transaction. },
-    //    value: newItem
-    //);
 });
 
 app.Run();

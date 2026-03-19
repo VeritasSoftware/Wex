@@ -7,6 +7,7 @@
         public Guid Identifier { get; set; }
         public decimal? Amount { get; set; }
         public string CurrencyCode { get; set; } = "Dollar";
+        public Guid CardIdentifier { get; set; }
 
         public override int GetHashCode()
         {

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using System.Globalization;
+using System.Net.Http.Json;
 using System.Text.Json;
 using Wex.API;
 using Wex.API.Models;
@@ -44,11 +46,11 @@ namespace Wex.Tests.API
 
         [Fact]
         public async Task GetTransaction_TransactionNotFoundInDb_Fail()
-        {           
+        {
+            // Arrange
             var identifier = "92876d62-a98a-4fd3-ae29-28cd12a1d5bd";
             var country = "Canada";
-
-            // Arrange
+            
             // Minimal API url with user input
             var apiUrl = $"/moneymanagement/{identifier}/{country}";
 
@@ -66,6 +68,71 @@ namespace Wex.Tests.API
 
             // Assert
             Assert.Null(transaction);
+        }
+
+        [Fact]
+        public async Task AddTransactionAsync_Success()
+        {
+            // Arrange
+            var transactionCreate = new TransactionCreateModel
+            {
+                Amount = 10,
+                CardId = 1,
+                Date = DateTime.Now.ToString(CultureInfo.CurrentCulture),
+                Description = "AddTransactionAsync Test",
+            };
+            
+            // Minimal API url
+            var apiUrl = $"/moneymanagement/transaction";
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync(apiUrl, transactionCreate);
+
+            response.EnsureSuccessStatusCode();
+
+            var strResponse = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions();
+            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
+            var transaction = JsonSerializer.Deserialize<TransactionSavedModel>(strResponse, options);
+
+            // Assert
+            Assert.NotNull(transaction);
+            Assert.Equal(transactionCreate.Amount, transaction.Amount);
+            Assert.Equal(transactionCreate.Description, transaction.Description);
+            Assert.Equal(DateTime.Parse(transactionCreate.Date).Date, DateTime.Parse(transaction.Date).Date);
+            Assert.NotEqual(transaction.Identifier, Guid.Empty);
+        }
+
+        [Fact]
+        public async Task AddCardAsync_Success()
+        {
+            // Arrange
+            var cardCreate = new CardCreateModel
+            {
+                CreditLimit = 10000
+            };
+            
+            // Minimal API url
+            var apiUrl = $"/moneymanagement/card";
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync(apiUrl, cardCreate);
+
+            response.EnsureSuccessStatusCode();
+
+            var strResponse = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions();
+            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
+            var card = JsonSerializer.Deserialize<CardModel>(strResponse, options);
+
+            // Assert
+            Assert.NotNull(card);
+            Assert.Equal(cardCreate.CreditLimit, card.CreditLimit);
+            Assert.NotEqual(card.Identifier, Guid.Empty);
         }
     }
 }

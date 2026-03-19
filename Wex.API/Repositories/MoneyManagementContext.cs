@@ -12,6 +12,15 @@ namespace Wex.API.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Card>()
+                .Property(t => t.Id)
+                .IsRequired(true)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Card>()
+                .Property(t => t.Identifier)
+                .IsRequired(true);
+
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.Id)
                 .IsRequired(true)

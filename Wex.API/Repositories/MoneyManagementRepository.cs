@@ -15,7 +15,18 @@ namespace Wex.API.Repositories
         public async Task<Transaction?> GetTransactionAsync(Guid identifier)
         {
             return await _context.Transactions
+                                 .Include(t => t.Card)
                                  .AsNoTracking()
+                                 .Select(t => new Transaction
+                                 {
+                                     Amount = t.Amount,
+                                     CardId = t.CardId,
+                                     CardIdentifier = t.Card.Identifier,
+                                     Date = t.Date,
+                                     Identifier = t.Identifier,
+                                     Description = t.Description,
+                                     Id = t.Id
+                                 })
                                  .SingleOrDefaultAsync(t => t.Identifier == identifier);
         }
 
@@ -33,6 +44,15 @@ namespace Wex.API.Repositories
             await _context.SaveChangesAsync();
 
             return transaction;
+        }
+
+        public async Task<Card> AddCardAsync(Card card)
+        {
+            _context.Cards.Add(card);
+
+            await _context.SaveChangesAsync();
+
+            return card;
         }
     }
 }

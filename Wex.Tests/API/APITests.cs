@@ -42,6 +42,7 @@ namespace Wex.Tests.API
             Assert.NotNull(transaction);
             Assert.Equal(expectedAmount, transaction.Amount);
             Assert.Equal(expectedCurrencyCode, transaction.CurrencyCode);
+            Assert.NotEqual(transaction.CardIdentifier, Guid.Empty);
         }
 
         [Fact]

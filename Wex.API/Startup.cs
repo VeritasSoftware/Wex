@@ -86,7 +86,8 @@ namespace Wex.API
             context.Cards.Add(new Card
             {
                 Id = 1,
-                CreditLimit = 1000.50m
+                CreditLimit = 1000.50m,
+                Identifier = Guid.NewGuid()
             });
 
             context.SaveChanges();

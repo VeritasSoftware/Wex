@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using NSubstitute;
 using System.Net;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using Wex.API.Models;
 using Wex.API.Services;
@@ -14,6 +13,9 @@ namespace Wex.Tests.Service
         public async Task ConvertCurrencyAsync_Should_Return_Correct_Amount()
         {
             // Arrange
+            decimal amountToConvert = 100.00m;
+            string country = "Canada";
+
             var httpServiceMock = Substitute.For<IHttpService>();
             var configurationMock = Substitute.For<IConfiguration>();
 
@@ -26,24 +28,20 @@ namespace Wex.Tests.Service
             var exchangeRateResponse =
                 new CurrencyExchangeResponse
                 {
-                    Data = new List<Data>
+                    Data = new List<ExchangeRateModel>
                                 {
-                                    new Data
+                                    new ExchangeRateModel
                                     {
-                                        CountryCurrencyDesc = "Canada Dollar",
+                                        Country = "Canada",
+                                        CurrencyCode = "Dollar",
+                                        CountryCurrencyDesc = "Canada-Dollar",
                                         ExchangeRate = "1.252",
                                         RecordDate = DateOnly.FromDateTime(DateTime.Now)
                                     }
                                 }
-                };
+                };            
 
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                WriteIndented = true, // not necessary, but more readable
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-            };
-
-            var jsonResponse = JsonSerializer.Serialize(exchangeRateResponse, jsonSerializerOptions);
+            var jsonResponse = JsonSerializer.Serialize(exchangeRateResponse);
 
             var handler = new MyMockHttpMessageHandler(HttpStatusCode.OK, jsonResponse);
             var client = new HttpClient(handler)
@@ -56,10 +54,11 @@ namespace Wex.Tests.Service
             var currencyExchangeService = new CurrencyExchangeService(httpServiceMock, configurationMock);
 
             // Act
-            var result = await currencyExchangeService.ConvertCurrencyAsync(100m, DateOnly.FromDateTime(DateTime.Now), "Canada");
+            var exchangeRate = await currencyExchangeService.ConvertCurrencyAsync(DateOnly.FromDateTime(DateTime.Now), country);
 
             // Assert
-            Assert.Equal(125.200m, result);
+            Assert.NotNull(exchangeRate);
+            Assert.Equal(125.200m, decimal.Parse(exchangeRate.ExchangeRate) * amountToConvert);
         }
     }
 

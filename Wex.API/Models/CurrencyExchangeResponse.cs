@@ -5,11 +5,17 @@ namespace Wex.API.Models
     public class CurrencyExchangeResponse
     {
         [JsonPropertyName("data")]
-        public List<Data> Data { get; set; } = new List<Data>();
+        public List<ExchangeRateModel> Data { get; set; } = new List<ExchangeRateModel>();
     }
 
-    public class Data
+    public class ExchangeRateModel
     {
+        [JsonPropertyName("country")]
+        public string Country { get; set; } = null!;
+
+        [JsonPropertyName("currency")]
+        public string CurrencyCode { get; set; } = null!;
+
         [JsonPropertyName("country_currency_desc")]
         public string CountryCurrencyDesc { get; set; } = null!;
 

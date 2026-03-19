@@ -6,7 +6,7 @@
         public string Description { get; set; } = string.Empty;
         public DateOnly Date { get; set; }
         public Guid Identifier { get; set; }
-        public decimal? Amount { get; set; }
+        public decimal Amount { get; set; }
 
         // Foreign key
         public long CardId { get; set; }

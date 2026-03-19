@@ -39,7 +39,7 @@ namespace Wex.Tests.Repository
             {
                 Identifier = identifier,
                 Amount = 100,
-                Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                Date = DateTime.UtcNow,
                 Description = "Test Transaction",
                 CardId = 1
             };
@@ -66,7 +66,7 @@ namespace Wex.Tests.Repository
             {
                 Identifier = identifier,
                 Amount = 100,
-                Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                Date = DateTime.UtcNow,
                 Description = "Test Transaction",
             };
 
@@ -95,7 +95,7 @@ namespace Wex.Tests.Repository
             {
                 Identifier = identifier,
                 Amount = 100,
-                Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                Date = DateTime.UtcNow,
                 Description = "Test Transaction",
                 CardId = 999 // Non-existent CardId
             };

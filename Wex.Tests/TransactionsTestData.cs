@@ -14,7 +14,7 @@ namespace Wex.Tests
                 {
                     Id = 2,
                     Amount = 200.0m,
-                    Date = DateOnly.FromDateTime(DateTime.Parse("17-03-2026", null, DateTimeStyles.AssumeLocal)),
+                    Date = DateTime.Parse("17-03-2026", null, DateTimeStyles.AssumeLocal),
                     Description = "Another Test Transaction",
                     CardId = 1,
                     Identifier = Guid.Parse("3d142c0f-1fc9-48cf-be15-26eea3497b71"),

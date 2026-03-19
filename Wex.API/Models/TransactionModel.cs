@@ -6,7 +6,7 @@
         public string Date { get; set; } = string.Empty;
         public Guid Identifier { get; set; }
         public decimal? Amount { get; set; }
-        public string CurrencyCode { get; set; } = "AUD";
+        public string CurrencyCode { get; set; } = "Dollar";
 
         public override int GetHashCode()
         {

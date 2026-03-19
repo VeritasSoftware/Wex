@@ -26,11 +26,13 @@ namespace Wex.API.Repositories
                                  .SingleOrDefaultAsync(c => c.Id == cardId);
         }
 
-        public async Task AddTransactionAsync(Transaction transaction)
+        public async Task<Transaction> AddTransactionAsync(Transaction transaction)
         {
             _context.Transactions.Add(transaction);
 
             await _context.SaveChangesAsync();
+
+            return transaction;
         }
     }
 }

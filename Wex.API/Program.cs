@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi;
 using Wex.API;
+using Wex.API.Models;
 using Wex.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,17 @@ app.MapGet("/moneymanagement/{identifier}/{country?}", async (string identifier,
     };
 
     return op;
+});
+
+app.MapPost("/moneymanagement/transaction", async (TransactionCreateModel transaction, [FromServices] IMoneyManagementService moneyManagementService) =>
+{
+    return await moneyManagementService.AddTransactionAsync(transaction);
+
+    //return Results.CreatedAtRoute(
+    //    routeName: "GetTransaction",
+    //    routeValues: new { identifier = transaction. },
+    //    value: newItem
+    //);
 });
 
 app.Run();

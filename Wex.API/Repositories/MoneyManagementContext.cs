@@ -12,10 +12,19 @@ namespace Wex.API.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure DateOnly mapping (EF Core 8 supports it directly)
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.Id)
+                .IsRequired(true)
+                .ValueGeneratedOnAdd();
+
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.Date)
+                .IsRequired(true)
                 .HasColumnType("date");
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.Identifier)
+                .IsRequired(true);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Wex.API.Entities;
 using Wex.API.Models;
 using Wex.API.Repositories;
 
@@ -8,14 +9,16 @@ namespace Wex.API.Services
     {
         private readonly IMoneyManagementRepository _repository;
         private readonly ICurrencyExchangeService _currencyExchangeService;
+        private readonly IMapperService _mapper;
         private readonly IConfiguration _configuration;
         private readonly ILogger<MoneyManagementService>? _logger;
 
         public MoneyManagementService(IMoneyManagementRepository repository, ICurrencyExchangeService currencyExchangeService,
-                                        IConfiguration configuration, ILogger<MoneyManagementService>? logger = null)
+                                      IMapperService mapper, IConfiguration configuration, ILogger<MoneyManagementService>? logger = null)
         {
             _repository = repository;
             _currencyExchangeService = currencyExchangeService;
+            _mapper = mapper;
             _configuration = configuration;
             _logger = logger;
         }
@@ -49,7 +52,7 @@ namespace Wex.API.Services
 
             _logger?.LogInformation($"Calling currency exchange api to determine exchange rate.");
 
-            var exchangeRate = await _currencyExchangeService.ConvertCurrencyAsync(transactionDb.Date, country);
+            var exchangeRate = await _currencyExchangeService.ConvertCurrencyAsync(DateOnly.FromDateTime(transactionDb.Date), country);
 
             if (exchangeRate == null)
             {
@@ -67,6 +70,15 @@ namespace Wex.API.Services
                 Description = transactionDb.Description,
                 Identifier = transactionDb.Identifier
             };
+        }
+
+        public async Task<TransactionSavedModel> AddTransactionAsync(TransactionCreateModel transaction)
+        {
+            var dbTransactionn = _mapper.Map<TransactionCreateModel, Transaction>(transaction);
+
+            var transactionInDb = await _repository.AddTransactionAsync(dbTransactionn);
+
+            return _mapper.Map<Transaction, TransactionSavedModel>(transactionInDb);
         }
     }
 }

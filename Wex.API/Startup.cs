@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using System.Globalization;
+using System.Reflection;
 using Wex.API.Entities;
+using Wex.API.Models;
 using Wex.API.Repositories;
 using Wex.API.Services;
 
@@ -34,11 +36,18 @@ namespace Wex.API
                 });
             });
 
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.CreateMap<TransactionCreateModel, Transaction>();
+                cfg.CreateMap<Transaction, TransactionSavedModel>();
+            });
+
             services.AddDbContext<MoneyManagementContext>(b => b.UseSqlite("Data Source=appdata.db"));
             services.AddHttpClient<IHttpService, HttpService>();
             services.AddScoped<IMoneyManagementRepository, MoneyManagementRepository>();
             services.AddScoped<ICurrencyExchangeService, CurrencyExchangeService>();
             services.AddScoped<IMoneyManagementService, MoneyManagementService>();
+            services.AddSingleton<IMapperService, MapperService>();
         }
 
         //public void Configure(IApplicationBuilder app, WebApplication webApplication)
@@ -86,7 +95,7 @@ namespace Wex.API
             {
                 Id = 1,
                 Amount = 100.00m,
-                Date = DateOnly.FromDateTime(DateTime.Parse("16-03-2026", null, DateTimeStyles.AssumeLocal).ToUniversalTime()),
+                Date = DateTime.Parse("16-03-2026", null, DateTimeStyles.AssumeLocal).ToUniversalTime(),
                 Description = "Test Transaction",
                 CardId = 1,
                 Identifier = Guid.Parse("482acfc4-2aca-49b7-bfaa-14c92ad99d83")
@@ -98,7 +107,7 @@ namespace Wex.API
             {
                 Id = 2,
                 Amount = 200.00m,
-                Date = DateOnly.FromDateTime(DateTime.Parse("17-03-2026", null, DateTimeStyles.AssumeLocal).ToUniversalTime()),
+                Date = DateTime.Parse("17-03-2026", null, DateTimeStyles.AssumeLocal).ToUniversalTime(),
                 Description = "Another Test Transaction",
                 CardId = 1,
                 Identifier = Guid.Parse("3d142c0f-1fc9-48cf-be15-26eea3497b71")

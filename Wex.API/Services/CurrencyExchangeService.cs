@@ -17,9 +17,9 @@ namespace Wex.API.Services
 
         public async Task<ExchangeRateModel?> ConvertCurrencyAsync(DateOnly transactionDate, string? toCountry = null)
         {
-            if (toCountry == null)  
+            if (toCountry != null && toCountry == _configuration["DefaultCurrencyCountry"])  
             {
-                toCountry = _configuration["DefaultCurrencyCountry"] ?? "AUD";
+                return null;
             }
 
             var baseUrl = _configuration["CurrencyExchangeAPIBaseUrl"];

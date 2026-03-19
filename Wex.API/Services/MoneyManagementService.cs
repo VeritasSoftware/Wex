@@ -8,13 +8,15 @@ namespace Wex.API.Services
     {
         private readonly IMoneyManagementRepository _repository;
         private readonly ICurrencyExchangeService _currencyExchangeService;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<MoneyManagementService>? _logger;
 
         public MoneyManagementService(IMoneyManagementRepository repository, ICurrencyExchangeService currencyExchangeService,
-                                        ILogger<MoneyManagementService>? logger = null)
+                                        IConfiguration configuration, ILogger<MoneyManagementService>? logger = null)
         {
             _repository = repository;
             _currencyExchangeService = currencyExchangeService;
+            _configuration = configuration;
             _logger = logger;
         }
 
@@ -31,6 +33,18 @@ namespace Wex.API.Services
                 _logger?.LogError($"Transaction: {identifier} not found in database.");
 
                 return null;
+            }
+
+            if (country == null || country == _configuration["DefaultCurrencyCountry"])
+            {                
+                return new TransactionModel
+                {
+                    Amount = transactionDb.Amount,
+                    CurrencyCode = "Dollar",
+                    Date = transactionDb.Date.ToString(CultureInfo.CurrentCulture),
+                    Description = transactionDb.Description,
+                    Identifier = transactionDb.Identifier
+                };
             }
 
             _logger?.LogInformation($"Calling currency exchange api to determine exchange rate.");
@@ -51,7 +65,7 @@ namespace Wex.API.Services
                 CurrencyCode = exchangeRate.CurrencyCode,
                 Date = transactionDb.Date.ToString(CultureInfo.CurrentCulture),
                 Description = transactionDb.Description,
-                Identifier = transactionDb.Identifier,
+                Identifier = transactionDb.Identifier
             };
         }
     }

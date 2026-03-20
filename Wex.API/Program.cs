@@ -12,7 +12,14 @@ startup.ConfigureServices(builder.Services);
 var app = builder.Build();
 startup.Configure(app, app.Environment);
 
-app.MapGet("/moneymanagement/balance/{identifier}/{country?}", async (string identifier, string? country,
+// Minimal API endpoints
+app.MapPost("/moneymanagement/card", async (CardCreateModel card, [FromServices] IMoneyManagementService moneyManagementService) =>
+{
+    return await moneyManagementService.AddCardAsync(card);
+})
+.WithName("AddCard");
+
+app.MapGet("/moneymanagement/card/balance/{identifier}/{country?}", async (string identifier, string? country,
                                                     [FromServices] IMoneyManagementService moneyManagementService) =>
 {
     country = string.IsNullOrWhiteSpace(country) ? null : country;
@@ -33,7 +40,14 @@ app.MapGet("/moneymanagement/balance/{identifier}/{country?}", async (string ide
     };
 
     return op;
-}); ;
+});
+
+app.MapPost("/moneymanagement/transaction", async (TransactionCreateModel transaction, [FromServices] IMoneyManagementService moneyManagementService) =>
+{
+    return await moneyManagementService.AddTransactionAsync(transaction);
+})
+.WithName("AddTransaction");
+
 
 app.MapGet("/moneymanagement/transaction/{identifier}/{country?}", async (string identifier, string? country,
                                                     [FromServices] IMoneyManagementService moneyManagementService) =>
@@ -57,17 +71,5 @@ app.MapGet("/moneymanagement/transaction/{identifier}/{country?}", async (string
 
     return op;
 });
-
-app.MapPost("/moneymanagement/card", async (CardCreateModel card, [FromServices] IMoneyManagementService moneyManagementService) =>
-{
-    return await moneyManagementService.AddCardAsync(card);
-})
-.WithName("AddCard");
-
-app.MapPost("/moneymanagement/transaction", async (TransactionCreateModel transaction, [FromServices] IMoneyManagementService moneyManagementService) =>
-{
-    return await moneyManagementService.AddTransactionAsync(transaction);
-})
-.WithName("AddTransaction");
 
 app.Run();

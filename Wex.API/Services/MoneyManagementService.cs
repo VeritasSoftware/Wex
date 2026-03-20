@@ -23,6 +23,51 @@ namespace Wex.API.Services
             _logger = logger;
         }
 
+        public async Task<CardBalanceModel?> GetCardBalanceAsync(string identifier, string? country = null)
+        {
+            var identifierGuid = Guid.Parse(identifier);
+
+            _logger?.LogInformation($"Fetching card: {identifier} balance from database.");
+
+            var balanceDb = await _repository.GetCardBalanceAsync(identifierGuid);
+
+            if (balanceDb == null)
+            {
+                _logger?.LogError($"Card: {identifier} not found in database.");
+
+                return null;
+            }
+
+            if (country == null || country == _configuration["DefaultCurrencyCountry"])
+            {
+                return new CardBalanceModel
+                {
+                    Balance = balanceDb.Balance,                    
+                    CurrencyCode = "Dollar",
+                    Identifier = balanceDb.Identifier.ToString(),
+                };
+            }
+
+            _logger?.LogInformation($"Calling currency exchange api to determine exchange rate.");
+
+            var exchangeRate = await _currencyExchangeService.ConvertCurrencyAsync(DateOnly.FromDateTime(DateTime.Now), country);
+
+            if (exchangeRate == null)
+            {
+                _logger?.LogError($"Exchange rate for country: {country} not found.");
+                return null;
+            }
+
+            var convertedAmount = balanceDb.Balance * decimal.Parse(exchangeRate.ExchangeRate ?? "1");
+
+            return new CardBalanceModel
+            {
+                Balance = convertedAmount,
+                CurrencyCode = exchangeRate.CurrencyCode,
+                Identifier = balanceDb.Identifier.ToString()
+            };
+        }
+
         public async Task<TransactionModel?> GetTransactionAsync(string identifier, string? country = null)
         {
             var identifierGuid = Guid.Parse(identifier);
@@ -44,7 +89,7 @@ namespace Wex.API.Services
                 {
                     Amount = transactionDb.Amount,
                     CurrencyCode = "Dollar",
-                    Date = transactionDb.Date.ToString(CultureInfo.CurrentCulture),
+                    Date = FromUniversalDateTime(transactionDb.Date),
                     Description = transactionDb.Description,
                     Identifier = transactionDb.Identifier,
                     CardIdentifier = transactionDb.CardIdentifier,

@@ -8,5 +8,6 @@ namespace Wex.API.Repositories
         Task<Transaction> AddTransactionAsync(Transaction transaction);
         Task<Card?> GetCardAsync(long cardId);
         Task<Transaction?> GetTransactionAsync(Guid identifier);
+        Task<CardBalance?> GetCardBalanceAsync(Guid identifier);
     }
 }

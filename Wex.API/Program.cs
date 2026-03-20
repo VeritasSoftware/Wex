@@ -12,6 +12,29 @@ startup.ConfigureServices(builder.Services);
 var app = builder.Build();
 startup.Configure(app, app.Environment);
 
+app.MapGet("/moneymanagement/balance/{identifier}/{country?}", async (string identifier, string? country,
+                                                    [FromServices] IMoneyManagementService moneyManagementService) =>
+{
+    country = string.IsNullOrWhiteSpace(country) ? null : country;
+    var result = await moneyManagementService.GetCardBalanceAsync(identifier, country);
+    return result;
+})
+.WithName("GetCardBalance")
+.WithOpenApi(op =>
+{
+    var p = op.Parameters[1];
+    p = new OpenApiParameter
+    {
+        Name = p.Name,
+        In = p.In,
+        Description = p.Description,
+        Required = false, // ✅ Now optional
+        Schema = p.Schema
+    };
+
+    return op;
+}); ;
+
 app.MapGet("/moneymanagement/{identifier}/{country?}", async (string identifier, string? country,
                                                     [FromServices] IMoneyManagementService moneyManagementService) =>
 {
@@ -38,11 +61,13 @@ app.MapGet("/moneymanagement/{identifier}/{country?}", async (string identifier,
 app.MapPost("/moneymanagement/card", async (CardCreateModel card, [FromServices] IMoneyManagementService moneyManagementService) =>
 {
     return await moneyManagementService.AddCardAsync(card);
-});
+})
+.WithName("AddCard");
 
 app.MapPost("/moneymanagement/transaction", async (TransactionCreateModel transaction, [FromServices] IMoneyManagementService moneyManagementService) =>
 {
     return await moneyManagementService.AddTransactionAsync(transaction);
-});
+})
+.WithName("AddTransaction");
 
 app.Run();

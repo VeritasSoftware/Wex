@@ -24,7 +24,7 @@ namespace Wex.Tests
             {
                 Id = 1,
                 CreditLimit = 1000.50m,
-                Identifier = Guid.NewGuid()
+                Identifier = Guid.Parse("128fb236-9666-4e8a-945e-7f55b800bca4")
             });
 
             context.SaveChanges();

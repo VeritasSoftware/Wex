@@ -17,6 +17,34 @@ namespace Wex.Tests.API
         }
 
         [Theory]
+        [InlineData("128fb236-9666-4e8a-945e-7f55b800bca4", "Canada", 958.9845, "Dollar")]
+        [InlineData("128fb236-9666-4e8a-945e-7f55b800bca4", null!, 700.50, "Dollar")]
+        public async Task GetCardBalance_Success(string identifier, string? country, decimal expectedAmount, string expectedCurrencyCode)
+        {
+            // Arrange
+            // Minimal API url with user input
+            var apiUrl = $"/moneymanagement/balance/{identifier}/{country}";
+
+            // Act
+            var response = await _httpClient.GetAsync(apiUrl);
+
+            response.EnsureSuccessStatusCode();
+
+            var strResponse = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions();
+            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
+            var cardBalance = JsonSerializer.Deserialize<CardBalanceModel>(strResponse, options);
+
+            // Assert
+            Assert.NotNull(cardBalance);
+            Assert.Equal(expectedAmount, cardBalance.Balance);
+            Assert.Equal(expectedCurrencyCode, cardBalance.CurrencyCode);
+            Assert.Equal(identifier, cardBalance.Identifier);
+        }
+
+        [Theory]
         [InlineData("3d142c0f-1fc9-48cf-be15-26eea3497b71", "Canada", 273.8000, "Dollar")]
         [InlineData("3d142c0f-1fc9-48cf-be15-26eea3497b71", "Australia", 200.00, "Dollar")]
         [InlineData("3d142c0f-1fc9-48cf-be15-26eea3497b71", null!, 200.00, "Dollar")]
@@ -133,6 +161,7 @@ namespace Wex.Tests.API
             // Assert
             Assert.NotNull(card);
             Assert.Equal(cardCreate.CreditLimit, card.CreditLimit);
+            Assert.True(card.Id > 0);
             Assert.NotEqual(card.Identifier, Guid.Empty);
         }
     }

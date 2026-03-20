@@ -7,5 +7,6 @@ namespace Wex.API.Services
         Task<CardModel> AddCardAsync(CardCreateModel card);
         Task<TransactionModel?> GetTransactionAsync(string identifier, string? country = null);
         Task<TransactionSavedModel> AddTransactionAsync(TransactionCreateModel transaction);
+        Task<CardBalanceModel?> GetCardBalanceAsync(string identifier, string? country = null);
     }
 }

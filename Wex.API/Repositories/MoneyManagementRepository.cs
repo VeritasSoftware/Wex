@@ -2,7 +2,7 @@
 using Wex.API.Entities;
 
 namespace Wex.API.Repositories
-{
+{   
     public class MoneyManagementRepository : IMoneyManagementRepository
     {
         MoneyManagementContext _context;
@@ -10,6 +10,19 @@ namespace Wex.API.Repositories
         public MoneyManagementRepository(MoneyManagementContext context)
         {
             _context = context;
+        }
+
+        public async Task<CardBalance?> GetCardBalanceAsync(Guid identifier)
+        {
+            return await _context.Cards
+                          .Include(c => c.Transactions)
+                          .Where(c => c.Identifier == identifier)
+                          .Select(c => new CardBalance
+                          {
+                              Identifier = c.Identifier,
+                              Balance = c.CreditLimit - c.Transactions.Sum(t => t.Amount)
+                          })
+                          .FirstOrDefaultAsync();              
         }
 
         public async Task<Transaction?> GetTransactionAsync(Guid identifier)

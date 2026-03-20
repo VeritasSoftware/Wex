@@ -13,12 +13,14 @@ var app = builder.Build();
 startup.Configure(app, app.Environment);
 
 // Minimal API endpoints
+// Add card
 app.MapPost("/moneymanagement/card", async (CardCreateModel card, [FromServices] IMoneyManagementService moneyManagementService) =>
 {
     return await moneyManagementService.AddCardAsync(card);
 })
 .WithName("AddCard");
 
+// Get balance by card identifier & country of currency
 app.MapGet("/moneymanagement/card/balance/{identifier}/{country?}", async (string identifier, string? country,
                                                     [FromServices] IMoneyManagementService moneyManagementService) =>
 {
@@ -26,29 +28,16 @@ app.MapGet("/moneymanagement/card/balance/{identifier}/{country?}", async (strin
     var result = await moneyManagementService.GetCardBalanceAsync(identifier, country);
     return result;
 })
-.WithName("GetCardBalance")
-.WithOpenApi(op =>
-{
-    var p = op.Parameters[1];
-    p = new OpenApiParameter
-    {
-        Name = p.Name,
-        In = p.In,
-        Description = p.Description,
-        Required = false, // ✅ Now optional
-        Schema = p.Schema
-    };
+.WithName("GetCardBalance");
 
-    return op;
-});
-
+// Add transaction
 app.MapPost("/moneymanagement/transaction", async (TransactionCreateModel transaction, [FromServices] IMoneyManagementService moneyManagementService) =>
 {
     return await moneyManagementService.AddTransactionAsync(transaction);
 })
 .WithName("AddTransaction");
 
-
+// Get transaction by transaction identifier & country of currency
 app.MapGet("/moneymanagement/transaction/{identifier}/{country?}", async (string identifier, string? country,
                                                     [FromServices] IMoneyManagementService moneyManagementService) =>
 {
@@ -56,20 +45,6 @@ app.MapGet("/moneymanagement/transaction/{identifier}/{country?}", async (string
     var result = await moneyManagementService.GetTransactionAsync(identifier, country);
     return result;
 })
-.WithName("GetTransaction")
-.WithOpenApi(op =>
-{
-    var p = op.Parameters[1];
-    p = new OpenApiParameter
-    {
-        Name = p.Name,
-        In = p.In,
-        Description = p.Description,
-        Required = false, // ✅ Now optional
-        Schema = p.Schema
-    };
-
-    return op;
-});
+.WithName("GetTransaction");
 
 app.Run();

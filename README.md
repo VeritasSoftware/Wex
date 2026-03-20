@@ -2,7 +2,7 @@
 
 I have built `Minimal API` endpoints for the test.
 
-Also, I am using `Sqlite` as a database.
+I am using `Sqlite` as a database.
 
 I have used `Entity Framework Code First` for creating the database.
 

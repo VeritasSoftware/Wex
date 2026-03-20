@@ -31,7 +31,7 @@ namespace Wex.API
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Money Management Minimal API",
-                    Description = "AI Assistant helps visitors to your website, narrow down which of the offered products or services suits their needs.",
+                    Description = "API provides card & transaction money management.",
                     Version = "v1"
                 });
             });
@@ -63,6 +63,17 @@ namespace Wex.API
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Money Management Minimal API V1");
                 });
+                SeedDatabase(app);
+            }
+            else
+            {
+                var serviceProvider = app.Services;
+                using var scope = serviceProvider.CreateScope();
+
+                var scopedServices = scope.ServiceProvider;
+                var context = scopedServices.GetRequiredService<MoneyManagementContext>();
+
+                context.Database.Migrate();
             }
 
             app.UseHttpsRedirection();

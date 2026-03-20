@@ -52,7 +52,7 @@ namespace Wex.Tests.API
         {
             // Arrange
             // Minimal API url with user input
-            var apiUrl = $"/moneymanagement/{identifier}/{country}";
+            var apiUrl = $"/moneymanagement/transaction/{identifier}/{country}";
 
             // Act
             var response = await _httpClient.GetAsync(apiUrl);

@@ -35,7 +35,7 @@ app.MapGet("/moneymanagement/balance/{identifier}/{country?}", async (string ide
     return op;
 }); ;
 
-app.MapGet("/moneymanagement/{identifier}/{country?}", async (string identifier, string? country,
+app.MapGet("/moneymanagement/transaction/{identifier}/{country?}", async (string identifier, string? country,
                                                     [FromServices] IMoneyManagementService moneyManagementService) =>
 {
     country = string.IsNullOrWhiteSpace(country) ? null : country;

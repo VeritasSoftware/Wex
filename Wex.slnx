@@ -1,6 +1,11 @@
 <Solution>
+  <Folder Name="/API/">
+    <Project Path="Wex.API/Wex.API.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
   <Folder Name="/Tests/">
     <Project Path="Wex.Tests/Wex.Tests.csproj" Id="1a8f8037-2e36-44ce-b214-137ff2cb27fb" />
   </Folder>
-  <Project Path="Wex.API/Wex.API.csproj" />
 </Solution>

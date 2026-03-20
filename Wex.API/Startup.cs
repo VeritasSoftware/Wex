@@ -63,22 +63,26 @@ namespace Wex.API
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Money Management Minimal API V1");
                 });
+
                 SeedDatabase(app);
             }
             else
             {
-                var serviceProvider = app.Services;
-                using var scope = serviceProvider.CreateScope();
-
-                var scopedServices = scope.ServiceProvider;
-                var context = scopedServices.GetRequiredService<MoneyManagementContext>();
-
-                context.Database.Migrate();
+                MigrateDatabase(app);
             }
 
             app.UseHttpsRedirection();
+        }
 
-            SeedDatabase(app);
+        static void MigrateDatabase(WebApplication app)
+        {
+            var serviceProvider = app.Services;
+            using var scope = serviceProvider.CreateScope();
+
+            var scopedServices = scope.ServiceProvider;
+            var context = scopedServices.GetRequiredService<MoneyManagementContext>();
+
+            context.Database.Migrate();
         }
 
         static void SeedDatabase(WebApplication app)
